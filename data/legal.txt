@@ -1,0 +1,40 @@
+Data Pulled from City of Austin Police Department (public domain)
+Data.AustinTexas.gov
+https://data.austintexas.gov/Public-Safety/Crime-Reports/fdj4-gpfu/data
+
+THE CITY OF AUSTIN MAKES NO REPRESENTATIONS OR WARRANTY AS TO THE COMPLETENESS,
+ACCURACY, TIMELINESS, OR CONTENT OF ANY DATA MADE AVAILABLE THROUGH THIS SITE. 
+THE CITY OF AUSTIN EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESSED OR 
+IMPLIED, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, OR FITNESS FOR A 
+PARTICULAR PURPOSE.
+
+Disclaimer of Endorsement
+The information posted on the Data.AustinTexas.gov website includes hypertext 
+links, or pointers, to information created and maintained by other public and/or
+private organizations. Data.AustinTexas.gov only provides these links and 
+pointers for your information and convenience. When you select a link to an 
+outside website, you are leaving the Data.AustinTexas.gov site and are subject
+to the privacy and security policies of the owners/sponsors of the outside website.
+
+Data.AustinTexas.gov does not control or guarantee the accuracy, relevance, 
+timeliness, or completeness of information contained on a linked website.
+Data.AustinTexas.gov does not endorse the organizations sponsoring linked websites
+and it does not endorse the views they express or the products/services they offer.
+Data.AustinTexas.gov cannot authorize the use of copyrighted materials contained in
+linked websites. Users must request such authorization from the sponsor of the
+linked website. Data.AustinTexas.gov is not responsible for transmissions 
+users receive from linked websites.
+
+The City uses methods to protect individual privacy, such as through the removal
+or obfuscation of personally identifiable information ("PII") or location data.
+You hereby understand and agree that you will not take any measures to 
+re-identify the Data or to contact individuals whose information is represented
+by the Data. You shall not combine the Data with data from any other data sets 
+for the purpose of re-identification of individuals. In the event that the Data
+is re-identified, and you become aware of such event, you are responsible for
+ensuring that any PII is immediately destroyed and that no PII is disclosed to
+any other individual or entity, and ask that you promptly notify the City of
+such re-identification and provide proof to the City of the destruction of any PII.
+
+*NO MEASURES WERE TAKEN IN THIS PROJECT TO RE-IDENTIFY
+    INDIVIDUALS WITH THIS LOCATION DATA* 

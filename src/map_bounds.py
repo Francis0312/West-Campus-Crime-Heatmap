@@ -8,9 +8,6 @@
 # @author Francisco Reyna
 # UT Austin Computer Science
 
-import heatmap_main # fetch data from main program
-import pandas as pd # used to read csv files
-
 
 
 

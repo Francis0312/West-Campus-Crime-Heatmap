@@ -29,12 +29,26 @@ def main():
     lat_long = data_lat_long(data_path)
     empty_heatmap = init_matrix(lat_long)
     heatmap = fill_matrix(empty_heatmap)
-    print(lat_long)
+    print(heatmap)
     #root = Tk()
     #init_gui(root)
 
 
 def fill_matrix(empty_heatmap):
+    # pandas init
+    data_frame = pd.read_csv(data_path)
+    data_frame = data_frame.fillna(0) # replace NaN's with 0s to avoid corrutpion
+    # translate values to doubles, only fetch coordinate data
+    data_frame = data_frame[["Latitude","Longitude"]].astype(float) 
+
+    i = 0
+    # extract min and max latitudes
+    for coord in data_frame:
+        print(coord)
+        i += 1
+        if i == 5:
+            break
+
     empty_heatmap
 
 
