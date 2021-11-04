@@ -28,25 +28,32 @@ digits_precision = 4
 def main():
     lat_long = data_lat_long(data_path)
     empty_heatmap = init_matrix(lat_long)
-    heatmap = fill_matrix(empty_heatmap)
+    heatmap = fill_matrix(empty_heatmap, lat_long)
     print(heatmap)
     #root = Tk()
     #init_gui(root)
 
 
-def fill_matrix(empty_heatmap):
+def fill_matrix(empty_heatmap, lat_long):
     # pandas init
     data_frame = pd.read_csv(data_path)
     data_frame = data_frame.fillna(0) # replace NaN's with 0s to avoid corrutpion
     # translate values to doubles, only fetch coordinate data
     data_frame = data_frame[["Latitude","Longitude"]].astype(float) 
+    max_latitude, max_longitude, min_latitude, min_longitude = lat_long[0], lat_long[1], lat_long[2], lat_long[3]
 
     i = 0
     # extract min and max latitudes
-    for coord in data_frame:
-        print(coord)
+    for index, row in data_frame.iterrows():
+        cur_lat = truncate(row["Latitude"], digits_precision)
+        cur_long = truncate(row["Longitude"], digits_precision)
+        # Avoid erroneous data points
+        if (cur_lat != 0 and cur_long != 0):
+            lat_ind = (cur_lat - min_latitude) * 10**digits_precision
+            long_ind = (cur_long - min_longitude) * (10**digits_precision)
+            print(str(long_ind))
         i += 1
-        if i == 5:
+        if i==100:
             break
 
     empty_heatmap
@@ -56,16 +63,17 @@ def fill_matrix(empty_heatmap):
 def init_matrix(lat_long):
     # calculate len and width
     max_latitude, max_longitude, min_latitude, min_longitude = lat_long[0], lat_long[1], lat_long[2], lat_long[3]
-    mat_length = (max_latitude - min_latitude) * (10**digits_precision)
-    mat_height = (max_longitude - min_longitude) * (10**digits_precision)
+    max_height = (max_latitude - min_latitude) * (10**digits_precision)
+    max_length = (max_longitude - min_longitude) * (10**digits_precision)
 
     # round from floats to integers
-    mat_length = round(mat_length) 
-    mat_height = round(mat_height)
+    max_height = round(max_height) 
+    max_length = round(max_length)
 
     # numpy tings
-    mat_shape = (mat_height, mat_length)
+    mat_shape = (max_height, max_length)
     empty_heatmap = np.zeros(shape=mat_shape)
+    print(mat_shape)
     return empty_heatmap
 
 
