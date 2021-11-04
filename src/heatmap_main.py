@@ -33,7 +33,7 @@ def main():
     #root = Tk()
     #init_gui(root)
 
-
+# Fills the heatmap with values
 def fill_matrix(empty_heatmap, lat_long):
     # pandas init
     data_frame = pd.read_csv(data_path)
@@ -49,14 +49,20 @@ def fill_matrix(empty_heatmap, lat_long):
         cur_long = truncate(row["Longitude"], digits_precision)
         # Avoid erroneous data points
         if (cur_lat != 0 and cur_long != 0):
-            lat_ind = (cur_lat - min_latitude) * 10**digits_precision
-            long_ind = (cur_long - min_longitude) * (10**digits_precision)
-            print(str(long_ind))
-        i += 1
-        if i==100:
-            break
+            # round values to integers for matrix indexing
+            lat_ind = round((cur_lat - min_latitude) * 10**digits_precision)
+            long_ind = round((cur_long - min_longitude) * (10**digits_precision))
 
-    empty_heatmap
+            # Avoid index out of bound on edge case coordinates
+            # *TODO better solution to this&
+            if (lat_ind == empty_heatmap.shape[0]):
+                lat_ind -= 1
+            if (long_ind == empty_heatmap.shape[1]):
+                long_ind -= 1
+            # increment value and values of surrounding cells!
+            empty_heatmap[lat_ind, long_ind] += 1.0
+            
+    return empty_heatmap
 
 
 # Initializes the 2D matrix that will encompass all of our data values
