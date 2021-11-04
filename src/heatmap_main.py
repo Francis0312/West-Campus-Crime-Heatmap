@@ -1,4 +1,5 @@
 # Changelog
+# v0.7 11/4/2021 - cleaned up a bit
 # v0.5 11/4/2021 8am - basic heatmap function working
 # v0.2 11/4/2021 6am - filling matrix data
 # v0.1 11/4/2021 5am - building fundamental framework
@@ -14,7 +15,6 @@
 # UT Austin Computer Science
 
 # imports
-import map_bounds # used for internal data matrix 
 import cv2 # openCV2 used for image handling
 import pandas as pd # used to read & analyze csv files
 import numpy as np
@@ -28,11 +28,11 @@ data_path = project_path + "/data/crime_reports01-2020_11-2021.csv" # data from 
 digits_precision = 4
 
 # gui info
+green = '#00FF00'
 yellow = '#FFFF00'
-orange = '#FF5733'
 red = '#FF0000'
 circle_radius = 18 # px
-alpha = 0.20
+alpha = 0.2
 circle_imgs = []
 
 # Initializes GUI and backend
@@ -53,7 +53,6 @@ def main():
     root.mainloop() 
     
 
-
 def draw_on_map(heatmap, map_img_path, root, canvas):
     # loading image
     map_image = cv2.imread(map_img_path)
@@ -71,21 +70,13 @@ def draw_on_map(heatmap, map_img_path, root, canvas):
             intensity = heatmap[lat][long]
             x1 = int(pixels_per_long * long)
             y1 = int(pixels_per_lat * lat)   
-            color = ''
-            if 1 <= intensity < 5 :
-                color = yellow
+            if 1 <= intensity < 5:
                 canvas.create_image(x1, y1, image=circle_imgs[0], anchor='nw')
-            elif 5 < intensity < 10:
-                color=orange
+            elif 5 <= intensity < 10:
                 canvas.create_image(x1, y1, image=circle_imgs[1], anchor='nw')
             elif intensity >= 10:
-                color=red
                 canvas.create_image(x1, y1, image=circle_imgs[2], anchor='nw')
             
-            # create_circle(x1, y1, x1+circle_radius, y1+circle_radius,
-            #     root, canvas, fill=color, alpha=alpha)
-            
-
 
 # Creates a circle with alpha value
 def create_circle(x1, y1, x2, y2, root, canvas, **kwargs):      
@@ -96,11 +87,11 @@ def create_circle(x1, y1, x2, y2, root, canvas, **kwargs):
 def init_circles(root):
     alpha_val = int(alpha * 255)
     red_fill = root.winfo_rgb(red) + (alpha_val,)
-    orange_fill = root.winfo_rgb(orange) + (alpha_val,)
-    yellow_fill = root.winfo_rgb(yellow) + (alpha_val,)
+    orange_fill = root.winfo_rgb(yellow) + (alpha_val,)
+    yellow_fill = root.winfo_rgb(green) + (alpha_val,)
 
     # Change radii offsets here
-    red_cir = Image.new('RGBA', (circle_radius*2, circle_radius*2), red_fill)
+    red_cir = Image.new('RGBA', (circle_radius+5, circle_radius+5), red_fill)
     orange_cir = Image.new('RGBA', (circle_radius+5, circle_radius+5), orange_fill)
     yellow_cir = Image.new('RGBA', (circle_radius, circle_radius), yellow_fill)
 
@@ -129,7 +120,7 @@ def fill_matrix(empty_heatmap, lat_long):
             long_ind = round((cur_long - min_longitude) * (10**digits_precision))
 
             # Avoid index out of bound on edge case coordinates
-            # *TODO better solution to this&
+            # *TODO better solution to this*
             if (lat_ind == empty_heatmap.shape[0]):
                 lat_ind -= 1
             if (long_ind == empty_heatmap.shape[1]):
