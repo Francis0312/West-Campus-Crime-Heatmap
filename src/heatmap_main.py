@@ -24,8 +24,10 @@ from PIL import ImageTk, Image # used to support jpeg/png formats in tkinter
 # global constants
 project_path = "C:/Users/pacot/Documents/Python Projects/crime_heatmap"
 map_img_path = project_path + "/images/map.png" # background map of west campus
-data_path = project_path + "/data/crime_reports01-2020_11-2021.csv" # data from Jan 2020-Nov 2021
-digits_precision = 4
+#data_path = project_path + "/data/crime_reports01-2020_11-2021.csv" # data from Jan 2020-Nov 2021
+data_path = project_path + "/data/crime_report2.csv" # data from Jan 2020-Nov 2021
+
+digits_precision = 4 # 4 is standard, 5 is slower but more accurate
 
 # gui info
 green = '#00FF00'
@@ -62,6 +64,8 @@ def draw_on_map(heatmap, map_img_path, root, canvas):
     # conversion factors
     pixels_per_lat = float(map_height_px) / heatmap.shape[0]
     pixels_per_long = float(map_length_px) / heatmap.shape[1]
+    lat_ind = round((30.29850750 - 30.2804484) * 10**digits_precision)
+    long_ind = round((-97.72422740 - -97.75507970) * (10**digits_precision))
 
     # loop through all coordinates
     for lat in range(heatmap.shape[0]):
@@ -145,7 +149,6 @@ def init_matrix(lat_long):
     # numpy tings
     mat_shape = (max_height, max_length)
     empty_heatmap = np.zeros(shape=mat_shape)
-    print(mat_shape)
     return empty_heatmap
 
 
