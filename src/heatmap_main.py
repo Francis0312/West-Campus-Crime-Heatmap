@@ -1,4 +1,5 @@
 # Changelog
+# v1.2 11/5/2021 - fixed erronouos implementation completely!
 # v1.1 11/5/2021 - cleanup unused methods from old erroneous implementation
 # v1.0 11/5/2021 - fixed bug with incorrect lat/long calculation, is correct now
 # v0.7 11/4/2021 - cleaned up a bit
@@ -21,17 +22,17 @@ import cv2 # openCV2 used for image handling
 import pandas as pd # used to read & analyze csv files
 import numpy as np
 from tkinter import * # Main GUI library
-from PIL import ImageTk, Image # used to support jpeg/png formats in tkinter
+from PIL import ImageTk, Image, EpsImagePlugin # used to support jpeg/png formats in tkinter
 
 # global constants
 project_path = "C:/Users/pacot/Documents/Python Projects/crime_heatmap"
 map_img_path = project_path + "/images/map.png" # background map of west campus
 #data_path = project_path + "/data/crime_reports01-2020_11-2021.csv" # data from Jan 2020-Nov 2021
 data_path = project_path + "/data/crime_report2.csv" # data from Jan 2020-Nov 2021
-
+output_path = project_path + "/output/"
 digits_precision = 4 # 4 is standard, 5 is slower but more accurate
 
-# gui info
+# gui info constants
 green = '#00FF00'
 yellow = '#FFFF00'
 red = '#FF0000'
@@ -57,9 +58,25 @@ def main():
     canvas.pack()  
     img = ImageTk.PhotoImage(Image.open(map_img_path)) 
     canvas.create_image(0, 0, anchor=NW, image=img) 
+    
+    # display backend data
     init_circles(root)
     draw_on_map(heatmap, map_img_path, root, canvas)
+    
+    # save to jpg file
+    filename = ""
+    canvas.update()
+    #save_as_png(canvas, 'heatmap')
     root.mainloop() 
+    
+    
+# Saves the Tkinter canvas object as an image for sharing :)
+def save_as_png(canvas, fileName):
+    # save postscipt image 
+    canvas.postscript(file = fileName + '.eps') 
+    # use PIL to convert to PNG 
+    img = Image.open(fileName + '.eps') 
+    img = img.save(fileName + '.png', 'png') 
     
 
 def draw_on_map(heatmap, map_img_path, root, canvas):
@@ -78,7 +95,8 @@ def draw_on_map(heatmap, map_img_path, root, canvas):
             # create circle at this point
             intensity = heatmap[lat][long]
             x1 = int(pixels_per_long * long)
-            y1 = int(pixels_per_lat * lat)   
+            # since lat grows south to north, we have to flip the y values 
+            y1 = int(pixels_per_lat * (heatmap.shape[0]-lat)  )
             if 1 <= intensity < 5:
                 canvas.create_image(x1, y1, image=circle_imgs[0], anchor='nw')
             elif 5 <= intensity < 10:
@@ -168,4 +186,5 @@ def truncate(float_param, N):
 
 # Driver function for scripting
 if __name__ == '__main__':
+    # TODO implement scripting by accepting a csv file and filename
     main()
