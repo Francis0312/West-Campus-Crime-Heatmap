@@ -1,8 +1,9 @@
 # Changelog
+# v1.0 11/5/2021 - fixed bug with incorrect lat/long calculation, is correct now
 # v0.7 11/4/2021 - cleaned up a bit
-# v0.5 11/4/2021 8am - basic heatmap function working
-# v0.2 11/4/2021 6am - filling matrix data
-# v0.1 11/4/2021 5am - building fundamental framework
+# v0.5 11/4/2021 - basic heatmap function working (might be slightly off)
+# v0.2 11/4/2021 - filling matrix data
+# v0.1 11/4/2021 - building fundamental framework
 #
 # *****************************************************************************
 # A program used to draw a heatmap of all the crime in West Campus, 
@@ -37,12 +38,17 @@ circle_radius = 18 # px
 alpha = 0.2
 circle_imgs = []
 
+# constants from map img
+MAX_LAT = 30.29850750
+MAX_LONG = -97.72422740
+MIN_LAT = 30.2804484
+MIN_LONG = -97.75507970
+
 # Initializes GUI and backend
 def main():
     # init backend data
-    lat_long = data_lat_long(data_path)
-    empty_heatmap = init_matrix(lat_long)
-    heatmap = fill_matrix(empty_heatmap, lat_long)
+    empty_heatmap = init_matrix()
+    heatmap = fill_matrix(empty_heatmap)
     
     # init frontend data
     root = Tk()
@@ -64,8 +70,6 @@ def draw_on_map(heatmap, map_img_path, root, canvas):
     # conversion factors
     pixels_per_lat = float(map_height_px) / heatmap.shape[0]
     pixels_per_long = float(map_length_px) / heatmap.shape[1]
-    lat_ind = round((30.29850750 - 30.2804484) * 10**digits_precision)
-    long_ind = round((-97.72422740 - -97.75507970) * (10**digits_precision))
 
     # loop through all coordinates
     for lat in range(heatmap.shape[0]):
@@ -105,23 +109,22 @@ def init_circles(root):
     
 
 # Fills the heatmap with values
-def fill_matrix(empty_heatmap, lat_long):
+def fill_matrix(empty_heatmap):
     # pandas init
     data_frame = pd.read_csv(data_path)
     data_frame = data_frame.fillna(0) # replace NaN's with 0s to avoid corrutpion
     # translate values to doubles, only fetch coordinate data
     data_frame = data_frame[["Latitude","Longitude"]].astype(float) 
-    max_latitude, max_longitude, min_latitude, min_longitude = lat_long[0], lat_long[1], lat_long[2], lat_long[3]
 
     # extract min and max latitudes
     for index, row in data_frame.iterrows():
         cur_lat = truncate(row["Latitude"], digits_precision)
         cur_long = truncate(row["Longitude"], digits_precision)
         # Avoid erroneous data points
-        if (cur_lat != 0 and cur_long != 0):
+        if (cur_lat != 0 and cur_long != 0 and fit_in_img(cur_lat, cur_long)):
             # round values to integers for matrix indexing
-            lat_ind = round((cur_lat - min_latitude) * 10**digits_precision)
-            long_ind = round((cur_long - min_longitude) * (10**digits_precision))
+            lat_ind = round((cur_lat - MIN_LAT) * 10**digits_precision)
+            long_ind = round((cur_long - MIN_LONG) * (10**digits_precision))
 
             # Avoid index out of bound on edge case coordinates
             # *TODO better solution to this*
@@ -135,18 +138,22 @@ def fill_matrix(empty_heatmap, lat_long):
     return empty_heatmap
 
 
-# Initializes the 2D matrix that will encompass all of our data values
-def init_matrix(lat_long):
-    # calculate len and width
-    max_latitude, max_longitude, min_latitude, min_longitude = lat_long[0], lat_long[1], lat_long[2], lat_long[3]
-    max_height = (max_latitude - min_latitude) * (10**digits_precision)
-    max_length = (max_longitude - min_longitude) * (10**digits_precision)
+# Makes sure a point fits in the image
+def fit_in_img(cur_lat, cur_long):
+    return cur_lat <= MAX_LAT and cur_long <= MAX_LONG
 
-    # round from floats to integers
+
+# Initializes the 2D matrix that will encompass all of our data values
+def init_matrix():
+    # calculate len and width
+    max_height = (MAX_LAT - MIN_LAT) * (10**digits_precision)
+    max_length = (MAX_LONG - MIN_LONG) * (10**digits_precision)
+
+    # round from floats to integers bc array len and height 
     max_height = round(max_height) 
     max_length = round(max_length)
 
-    # numpy tings
+    # numpy tings - create empty heatmap with values
     mat_shape = (max_height, max_length)
     empty_heatmap = np.zeros(shape=mat_shape)
     return empty_heatmap
