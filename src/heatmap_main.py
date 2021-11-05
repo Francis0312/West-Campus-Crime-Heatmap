@@ -1,4 +1,5 @@
 # Changelog
+# v1.1 11/5/2021 - cleanup unused methods from old erroneous implementation
 # v1.0 11/5/2021 - fixed bug with incorrect lat/long calculation, is correct now
 # v0.7 11/4/2021 - cleaned up a bit
 # v0.5 11/4/2021 - basic heatmap function working (might be slightly off)
@@ -157,40 +158,6 @@ def init_matrix():
     mat_shape = (max_height, max_length)
     empty_heatmap = np.zeros(shape=mat_shape)
     return empty_heatmap
-
-
-# Reads the minimum and maximum latitude and longitude values from the data csv
-# @return [max_latitude, max_longitude, min_latidude, min_longitude]
-def data_lat_long(data_path):
-    # pandas init
-    data_frame = pd.read_csv(data_path)
-    data_frame = data_frame.fillna(0) # replace NaN's with 0s to avoid corrutpion
-
-    # translate values to doubles, only fetch coordinate data
-    data_frame = data_frame[["Latitude","Longitude"]].astype(float) 
-    # print(data_frame.head())
-    max_latitude = -999.0
-    min_latidude = 999.0
-    max_longitude = -999.0
-    min_longitude = 999.0
-
-    # extract min and max latitudes
-    for latitude in data_frame["Latitude"]:
-        if latitude != 0.0:
-            max_latitude = max(max_latitude, latitude)
-            min_latidude = min(min_latidude, latitude)
-
-    # extract min and max longitudes
-    for longitude in data_frame["Longitude"]:
-        if longitude != 0.0:
-            max_longitude = max(max_longitude, longitude)
-            min_longitude = min(min_longitude, longitude)
-    
-    # Truncate each float value
-    lat_longs = [max_latitude, max_longitude, min_latidude, min_longitude]
-    for i in range(len(lat_longs)):
-        lat_longs[i] = truncate(lat_longs[i], digits_precision)
-    return lat_longs
     
 
 # Truncates a float to N digits past the decimal point
