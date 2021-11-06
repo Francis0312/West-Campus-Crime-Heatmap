@@ -36,7 +36,8 @@ digits_precision = 4 # 4 is standard, 5 is slower but more accurate
 green = '#00FF00'
 yellow = '#FFFF00'
 red = '#FF0000'
-circle_radius = 18 # px
+radius = 18 # px
+size_offset = 5 # px to make yellow & red larger
 alpha = 0.2
 circle_imgs = []
 
@@ -97,12 +98,17 @@ def draw_on_map(heatmap, map_img_path, root, canvas):
             x1 = int(pixels_per_long * long)
             # since lat grows south to north, we have to flip the y values 
             y1 = int(pixels_per_lat * (heatmap.shape[0]-lat)  )
-            if 1 <= intensity < 5:
-                canvas.create_image(x1, y1, image=circle_imgs[0], anchor='nw')
+            # * subtractions are to center the squares over the actual point 
+            # they represent *
+            # draw green points
+            if 1 <= intensity < 5: 
+                canvas.create_image(x1-radius, y1-radius, image=circle_imgs[0], anchor='nw')
+            # draw yellow points
             elif 5 <= intensity < 10:
-                canvas.create_image(x1, y1, image=circle_imgs[1], anchor='nw')
+                canvas.create_image(x1-radius-size_offset, y1-radius-size_offset, image=circle_imgs[1], anchor='nw')
+            # draw red points
             elif intensity >= 10:
-                canvas.create_image(x1, y1, image=circle_imgs[2], anchor='nw')
+                canvas.create_image(x1-radius-size_offset, y1-radius-size_offset, image=circle_imgs[2], anchor='nw')
             
 
 # Creates a circle with alpha value
@@ -115,15 +121,15 @@ def init_circles(root):
     alpha_val = int(alpha * 255)
     red_fill = root.winfo_rgb(red) + (alpha_val,)
     orange_fill = root.winfo_rgb(yellow) + (alpha_val,)
-    yellow_fill = root.winfo_rgb(green) + (alpha_val,)
+    green_fill = root.winfo_rgb(green) + (alpha_val,)
 
     # Change radii offsets here
-    red_cir = Image.new('RGBA', (circle_radius+5, circle_radius+5), red_fill)
-    orange_cir = Image.new('RGBA', (circle_radius+5, circle_radius+5), orange_fill)
-    yellow_cir = Image.new('RGBA', (circle_radius, circle_radius), yellow_fill)
+    red_cir = Image.new('RGBA', (radius+size_offset, radius+size_offset), red_fill)
+    yellow_cir = Image.new('RGBA', (radius+size_offset, radius+size_offset), orange_fill)
+    green_cir = Image.new('RGBA', (radius, radius), green_fill)
 
+    circle_imgs.append(ImageTk.PhotoImage(green_cir))
     circle_imgs.append(ImageTk.PhotoImage(yellow_cir))
-    circle_imgs.append(ImageTk.PhotoImage(orange_cir))
     circle_imgs.append(ImageTk.PhotoImage(red_cir))
     
 
