@@ -1,4 +1,5 @@
 # Changelog
+# v1.3 11/7/2021 - style fixes
 # v1.2 11/5/2021 - fixed erronouos implementation completely!
 # v1.1 11/5/2021 - cleanup unused methods from old erroneous implementation
 # v1.0 11/5/2021 - fixed bug with incorrect lat/long calculation, is correct now
@@ -22,13 +23,15 @@ import cv2 # openCV2 used for image handling
 import pandas as pd # used to read & analyze csv files
 import numpy as np
 from tkinter import * # Main GUI library
-from PIL import ImageTk, Image, EpsImagePlugin # used to support jpeg/png formats in tkinter
+from PIL import ImageTk, Image # used to support jpeg/png formats in tkinter
 
 # global constants
 project_path = "C:/Users/pacot/Documents/Python Projects/crime_heatmap"
 map_img_path = project_path + "/images/map.png" # background map of west campus
-#data_path = project_path + "/data/crime_reports01-2020_11-2021.csv" # data from Jan 2020-Nov 2021
-data_path = project_path + "/data/crime_report2.csv" # data from Jan 2020-Nov 2021
+# data from Jan 2020-Nov 2021
+#data_path = project_path + "/data/crime_reports01-2020_11-2021.csv" 
+# data from Jan 2020-Nov 2021
+data_path = project_path + "/data/crime_report2.csv" 
 output_path = project_path + "/output/"
 digits_precision = 4 # 4 is standard, 5 is slower but more accurate
 
@@ -78,8 +81,9 @@ def save_as_png(canvas, fileName):
     # use PIL to convert to PNG 
     img = Image.open(fileName + '.eps') 
     img = img.save(fileName + '.png', 'png') 
-    
 
+
+# Draws each shape point of the 2D matrix onto the canvas image (map)_
 def draw_on_map(heatmap, map_img_path, root, canvas):
     # loading image
     map_image = cv2.imread(map_img_path)
@@ -102,13 +106,16 @@ def draw_on_map(heatmap, map_img_path, root, canvas):
             # they represent *
             # draw green points
             if 1 <= intensity < 5: 
-                canvas.create_image(x1-radius, y1-radius, image=circle_imgs[0], anchor='nw')
+                canvas.create_image(x1-radius, y1-radius, image=circle_imgs[0],
+                                    anchor='nw')
             # draw yellow points
             elif 5 <= intensity < 10:
-                canvas.create_image(x1-radius-size_offset, y1-radius-size_offset, image=circle_imgs[1], anchor='nw')
+                canvas.create_image(x1-radius-size_offset, y1-radius-size_offset,
+                                    image=circle_imgs[1], anchor='nw')
             # draw red points
             elif intensity >= 10:
-                canvas.create_image(x1-radius-size_offset, y1-radius-size_offset, image=circle_imgs[2], anchor='nw')
+                canvas.create_image(x1-radius-size_offset, y1-radius-size_offset,
+                                    image=circle_imgs[2], anchor='nw')
             
 
 # Creates a circle with alpha value
@@ -124,8 +131,10 @@ def init_circles(root):
     green_fill = root.winfo_rgb(green) + (alpha_val,)
 
     # Change radii offsets here
-    red_cir = Image.new('RGBA', (radius+size_offset, radius+size_offset), red_fill)
-    yellow_cir = Image.new('RGBA', (radius+size_offset, radius+size_offset), orange_fill)
+    red_cir = Image.new('RGBA', (radius+size_offset, radius+size_offset),
+                                 red_fill)
+    yellow_cir = Image.new('RGBA', (radius+size_offset, radius+size_offset),
+                                    orange_fill)
     green_cir = Image.new('RGBA', (radius, radius), green_fill)
 
     circle_imgs.append(ImageTk.PhotoImage(green_cir))
